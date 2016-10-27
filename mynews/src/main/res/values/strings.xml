@@ -52,9 +52,6 @@
     <string name="news_title_item_details">新闻内容</string>
     <string name="news_title_item_time">时间</string>
 
-    <string name="fragment_news_headline">新闻大标题</string>
-    <string name="fragment_news_date">时间戳</string>
-    <string name="fragment_news_picDescribe">新闻图片描述</string>
-    <string name="fragment_news_details">新闻详细内容</string>
+    <string name="fragment_news_noNET">无法连接网络</string>
 
 </resources>
