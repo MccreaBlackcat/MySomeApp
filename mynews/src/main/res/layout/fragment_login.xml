@@ -1,0 +1,143 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#c89f9d9d"
+    tools:context="com.timestudio.mynews.fragment.LoginFragment">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:background="@drawable/ll_login_shape"
+        android:padding="1dp"
+        android:layout_width="300dp"
+        android:layout_height="400dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_login_login"
+                android:background="@drawable/menubar_click"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:textSize="35dp"
+                android:text="@string/fragment_login_login"/>
+            <TextView
+                android:layout_width="1dp"
+                android:background="#c85555"
+                android:layout_height="match_parent" />
+            <TextView
+                android:id="@+id/tv_login_register"
+                android:background="@drawable/menubar_click"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:textSize="35dp"
+                android:text="@string/fragment_login_register"/>
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:background="#c85555"
+            android:layout_height="1dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:paddingTop="50dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+            <EditText
+                android:id="@+id/et_account_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:maxLines="1"
+                android:textSize="25dp"
+                android:hint="@string/fragment_login_account_number"
+                android:layout_above="@+id/et_password"
+                android:layout_alignStart="@+id/et_password" />
+            <TextView
+                android:layout_width="match_parent"
+                android:background="#c85555"
+                android:layout_height="1dp" />
+            <EditText
+                android:id="@+id/et_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:inputType="textPassword"
+                android:hint="@string/fragment_login_password"
+                android:textSize="25dp"
+                android:maxLength="15"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+            <TextView
+                android:layout_width="match_parent"
+                android:background="#c85555"
+                android:layout_height="1dp" />
+            <EditText
+                android:id="@+id/et_password_again"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:inputType="textPassword"
+                android:hint="@string/fragment_login_password_again"
+                android:textSize="25dp"
+                android:visibility="invisible"
+                android:maxLength="15"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+            <TextView
+                android:id="@+id/tv_link"
+                android:layout_width="match_parent"
+                android:visibility="invisible"
+                android:background="#c85555"
+                android:layout_height="1dp" />
+            <EditText
+                android:id="@+id/et_emails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="@string/fragment_login_emails"
+                android:textSize="25dp"
+                android:visibility="invisible"
+                android:maxLines="1"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+            <TextView
+                android:id="@+id/tv_link_emails"
+                android:layout_width="match_parent"
+                android:visibility="invisible"
+                android:background="#c85555"
+                android:layout_height="1dp" />
+            <Button
+                android:id="@+id/btn_login"
+                android:layout_marginTop="50dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sle_btn_login"
+                android:text="@string/fragment_login_login"
+                android:textColor="#ffffff"
+                 />
+            <TextView
+                android:id="@+id/tv_lost_password"
+                android:layout_marginTop="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/fragment_login_lost"
+                />
+
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorMenuBarSelector">#32918d8e</color>
+    <color name="colorMenuBarSelector_click">#32464445</color>
+    <color name="sel_btn_login_true">#d06868</color>
+    <color name="sel_btn_login_false">#9a0202</color>
+</resources>

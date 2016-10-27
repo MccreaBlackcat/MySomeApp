@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_menu_bar"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/bg_slidingmenu_left"
+    android:paddingTop="15dp"
+    android:paddingLeft="15dp"
+    android:paddingBottom="15dp"
+    android:orientation="vertical"
+    tools:context="com.timestudio.mynews.activity.MenuBarActivity">
+
+    <LinearLayout
+        android:id="@+id/ll_menuBar_news"
+        android:layout_width="match_parent"
+        android:background="@drawable/menubar_click"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        >
+        <ImageView
+            android:src="@mipmap/biz_navigation_tab_news"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="@string/menu_bar_news"
+            android:textSize="25dp"
+            android:textColor="#c85555"
+            android:paddingLeft="5dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_menuBar_read"
+        android:layout_width="match_parent"
+        android:background="@drawable/menubar_click"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        >
+        <ImageView
+            android:src="@mipmap/biz_navigation_tab_read"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="@string/menu_bar_read"
+            android:textSize="25dp"
+            android:textColor="#c89155"
+            android:paddingLeft="5dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_menuBar_local"
+        android:layout_width="match_parent"
+        android:background="@drawable/menubar_click"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        >
+        <ImageView
+            android:src="@mipmap/biz_navigation_tab_local_news"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="@string/menu_bar_local"
+            android:textSize="25dp"
+            android:textColor="#55c8a0"
+            android:paddingLeft="5dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_menuBar_reply"
+        android:layout_width="match_parent"
+        android:background="@drawable/menubar_click"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        >
+        <ImageView
+            android:src="@mipmap/biz_navigation_tab_ties"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="@string/menu_bar_reply"
+            android:textSize="25dp"
+            android:textColor="#bcbc5a"
+            android:paddingLeft="5dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_menuBar_pics"
+        android:layout_width="match_parent"
+        android:background="@drawable/menubar_click"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        >
+        <ImageView
+            android:src="@mipmap/biz_navigation_tab_pics"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="@string/menu_bar_pic"
+            android:textSize="25dp"
+            android:textColor="#5596c8"
+            android:paddingLeft="5dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView" />
+    </LinearLayout>
+</LinearLayout>
