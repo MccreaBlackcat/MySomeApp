@@ -36,9 +36,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
     //ContentFragment的控件声明
     FrameLayout fl_main;
-    ImageView iv_menu;
-    ImageView iv_login;
-    TextView tv_titleBar;
+
 
     //声明一个第三方类SlidingMenu，界面的左右滑动效果
     SlidingMenu slidingMenu;
@@ -67,9 +65,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     protected void initView() {
         preferences = getSharedPreferences("login", 0);
 
-        iv_menu = (ImageView) findViewById(R.id.iv_Menu);
-        iv_login = (ImageView) findViewById(R.id.iv_login);
-        tv_titleBar = (TextView) findViewById(R.id.tv_titleBar);
+
         fl_main = (FrameLayout) findViewById(R.id.fl_main);
         if (!ConnectUtil.isNetworkAvailable(this)) {
             Toast.makeText(this, getString(R.string.netWork_not), Toast.LENGTH_SHORT).show();
@@ -94,8 +90,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
     @Override
     protected void setListener() {
-        iv_menu.setOnClickListener(this);
-        iv_login.setOnClickListener(this);
 
         ll_menuBar_news.setOnClickListener(this);
         ll_menuBar_read.setOnClickListener(this);
@@ -110,31 +104,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            //点击房子
-            case R.id.iv_Menu:
-                if (slidingMenu != null && slidingMenu.isMenuShowing()) {
-                    //隐藏
-                    slidingMenu.showContent();
-                }else {
-                    //展示
-                    slidingMenu.showMenu();
-                }
-                break;
-            //点击分享
-            case R.id.iv_login:
-                if (slidingMenu != null && slidingMenu.isSecondaryMenuShowing()) {
-                    //隐藏
-                    slidingMenu.showContent();
-                }else {
-                    //展示
-                    slidingMenu.showSecondaryMenu();
-                }
-                break;
             //目录里面的控件
             case R.id.ll_menuBar_news:
                 //点击的时候，给选中的目标设置背景，拥有点击效果
-                setTitleBarTest(getString(R.string.main_title_information));
-                addFragment(new ContentFragment());
+                MainFragment.setTitleBarTest(getString(R.string.main_title_information));
+                replaceFragment(MainFragment);
                 ll_menuBar_news.setBackgroundResource(R.drawable.menubar_click);
                 ll_menuBar_read.setBackground(null);
                 ll_menuBar_local.setBackground(null);
@@ -144,31 +118,35 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 slidingMenu.showContent();
                 break;
             case R.id.ll_menuBar_read:
-                setTitleBarTest(getString(R.string.main_title_myRead));
+                MainFragment.setTitleBarTest(getString(R.string.main_title_myRead));
                 ll_menuBar_read.setBackgroundResource(R.drawable.menubar_click);
                 ll_menuBar_news.setBackground(null);
                 ll_menuBar_local.setBackground(null);
                 ll_menuBar_reply.setBackground(null);
                 ll_menuBar_pics.setBackground(null);
+
+                slidingMenu.showContent();
                 break;
             case R.id.ll_menuBar_local:
-                setTitleBarTest(getString(R.string.main_title_local));
+                MainFragment.setTitleBarTest(getString(R.string.main_title_local));
                 ll_menuBar_local.setBackgroundResource(R.drawable.menubar_click);
                 ll_menuBar_read.setBackground(null);
                 ll_menuBar_news.setBackground(null);
                 ll_menuBar_reply.setBackground(null);
                 ll_menuBar_pics.setBackground(null);
+                slidingMenu.showContent();
                 break;
             case R.id.ll_menuBar_reply:
-                setTitleBarTest(getString(R.string.main_title_replay));
+                MainFragment.setTitleBarTest(getString(R.string.main_title_replay));
                 ll_menuBar_reply.setBackgroundResource(R.drawable.menubar_click);
                 ll_menuBar_read.setBackground(null);
                 ll_menuBar_local.setBackground(null);
                 ll_menuBar_news.setBackground(null);
                 ll_menuBar_pics.setBackground(null);
+                slidingMenu.showContent();
                 break;
             case R.id.ll_menuBar_pics:
-                setTitleBarTest(getString(R.string.main_title_pic));
+                MainFragment.setTitleBarTest(getString(R.string.main_title_pic));
                 slidingMenu.showContent();
                 ll_menuBar_pics.setBackground(getResources().getDrawable(R.drawable.menubar_click));
                 ll_menuBar_read.setBackground(null);
@@ -192,7 +170,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                     if (!ConnectUtil.isNetworkAvailable(this)) {
                         Toast.makeText(this,getString(R.string.netWork_not),Toast.LENGTH_SHORT).show();
                     }
-                    setTitleBarTest(getString(R.string.fragment_login_login));
+                    MainFragment.setTitleBarTest(getString(R.string.fragment_login_login));
                     //替换掉原来的fragment
                     replaceFragment(new LoginFragment());
                     slidingMenu.showContent();
@@ -230,18 +208,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
      * @description 设置主界面Title的文字内容
      */
     private void setTitleBarTest(String s) {
-        tv_titleBar.setText(s);
+        MainFragment.setTitleBarTest(s);
     }
 
     /**
      * @description 添加新的碎片
      */
-    private void addFragment(Fragment fragment) {
+    public void addFragment(Fragment fragment) {
         this.fragment = fragment;
         mFm = getSupportFragmentManager();
         mFt = mFm.beginTransaction();
         mFt.add(R.id.fl_main,fragment)
-//                .addToBackStack("SHEN")
+                .addToBackStack(null)
                 .commit();
     }
 
@@ -265,13 +243,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             if (!(fragment instanceof ContentFragment)) {
                 replaceFragment(MainFragment);
                 slidingMenu.showContent();
-                tv_titleBar.setText(getString(R.string.main_title_information));
+//                tv_titleBar.setText(getString(R.string.main_title_information));
                 return true;
             }
             //判断显示的是slidingMenu的那个界面
             if (slidingMenu != null && (slidingMenu.isMenuShowing() || slidingMenu.isSecondaryMenuShowing())) {
                 slidingMenu.showContent();
-                tv_titleBar.setText(getString(R.string.main_title_information));
+//                tv_titleBar.setText(getString(R.string.main_title_information));
                 return true;
             }
         }
@@ -286,5 +264,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         replaceFragment(MainFragment);
         tv_login_test.setText(user);
         ll_share.setVisibility(View.INVISIBLE);
+    }
+
+    public void setslidingMenuShowMenu() {
+        if (slidingMenu != null && slidingMenu.isMenuShowing()) {
+            //隐藏
+            slidingMenu.showContent();
+        }else {
+            //展示
+            slidingMenu.showMenu();
+        }
+    }
+    public void setslidingMenuShowSecondaryMenu() {
+        if (slidingMenu != null && slidingMenu.isSecondaryMenuShowing()) {
+            //隐藏
+            slidingMenu.showContent();
+        }else {
+            //展示
+            slidingMenu.showSecondaryMenu();
+        }
     }
 }

@@ -62,13 +62,11 @@ public class NewsTitleAdapter extends MyBaseAdapter<NewsTitle> {
         Bitmap bit = lruCache.get(iconName);
 
         if (bit != null) {
-            Log.i("shen", "内存");
             return bit;
         }
         //判断本地是否有图片
         bit = getCacheImage(iconName);
         if (bit != null) {
-            Log.i("shen", "本地");
             return bit;
         }
         //网络连接获取图片
@@ -85,7 +83,6 @@ public class NewsTitleAdapter extends MyBaseAdapter<NewsTitle> {
                 //取出ImageView
                 ImageView im = (ImageView) xlv_view.findViewWithTag(url);
                 if (im != null) {
-                    Log.i("shen", "网络");
                     im.setImageBitmap(bitmap);
                     //运行缓存
                     lruCache.put(iconName, bitmap);
@@ -104,7 +101,6 @@ public class NewsTitleAdapter extends MyBaseAdapter<NewsTitle> {
                         mFile.createNewFile();
                         op = new FileOutputStream(mFile);
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, op);
-                        Log.i("shen", "已经保存到本地");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }finally {

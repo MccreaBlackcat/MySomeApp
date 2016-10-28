@@ -34,7 +34,6 @@ public class ParserNews {
                                 object2.getInt("subid")));
                     }
                 }
-
             }
         } catch (JSONException e) {
             e.printStackTrace();
