@@ -31,7 +31,17 @@ public class DBHelper extends SQLiteOpenHelper{
                 "icon text," +
                 "title text," +
                 "summary text," +
-                "link text"+
+                "link text,"+
+                "subid integer)"
+        );
+        db.execSQL("create table newsCollect (" +
+                "_id integer primary key autoincrement," +
+                "nid integer," +
+                "stamp text," +
+                "icon text," +
+                "title text," +
+                "summary text," +
+                "link text,"+
                 "subid integer)"
         );
     }

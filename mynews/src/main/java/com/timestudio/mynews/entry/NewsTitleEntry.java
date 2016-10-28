@@ -9,11 +9,12 @@ public class NewsTitleEntry {
 
     public static final String TABLE_NAME_TYPE = "newsType";
     public static final String TABLE_NAME_LIST = "news";
+    public static final String TABLE_NAME_Collect = "newsCollect";
 
     public static final String COLUMNS_NAME_SUBGROUP = "subgroup";
     public static final String COLUMNS_NAME_SUBID = "subid";
 
-    public static final String COLUMNS_NAME_NID = "subid";
+    public static final String COLUMNS_NAME_NID = "nid";
     public static final String COLUMNS_NAME_STAMP = "stamp";
     public static final String COLUMNS_NAME_ICON = "icon";
     public static final String COLUMNS_NAME_TITLE = "title";
