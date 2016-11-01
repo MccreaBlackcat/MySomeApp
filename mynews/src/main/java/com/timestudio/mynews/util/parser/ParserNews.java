@@ -1,5 +1,8 @@
 package com.timestudio.mynews.util.parser;
 
+import android.util.Log;
+
+import com.timestudio.mynews.entity.CommentEntity;
 import com.timestudio.mynews.entity.NewsTitle;
 import com.timestudio.mynews.entity.NewsTitleHorizontal;
 
@@ -69,4 +72,31 @@ public class ParserNews {
 
         return list;
     }
+
+    /**
+     * 解析评论
+     */
+    public static ArrayList<CommentEntity> parserCommentList(String json) {
+        ArrayList<CommentEntity> list = new ArrayList<>();
+        try {
+            JSONObject object = new JSONObject(json);
+            if (object.getString("message").equals("OK") &&
+                    object.getString("status").equals("0")) {
+                JSONArray array = object.getJSONArray("data");
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject ob = array.getJSONObject(i);
+                    String uid = ob.getString("uid");
+                    String content = ob.getString("content");
+                    String stamp = ob.getString("stamp");
+                    int cid = ob.getInt("cid");
+                    String portrait = ob.getString("portrait");
+                    list.add(new CommentEntity(uid, content, stamp, cid, portrait));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 }

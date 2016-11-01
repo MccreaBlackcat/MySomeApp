@@ -62,10 +62,6 @@ public class NewsDetailsFragment extends Fragment implements View.OnClickListene
     //是否收藏，默认为没有收藏
     private boolean isCollect = false;
 
-    public NewsDetailsFragment() {
-        // Required empty public constructor
-    }
-
     @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -148,7 +144,11 @@ public class NewsDetailsFragment extends Fragment implements View.OnClickListene
                     super.onProgressChanged(view, newProgress);
                 }
             });
-
+            //判断是否收藏，更改UI
+            isCollect = dbManager.queryIsCollectNews(newsTitle.getNid());
+            if (isCollect) {
+                btn_collect.setText("取消收藏");
+            }
             //获取评论的数量，设置到UI上
             initCommentQuantity();
 
@@ -169,10 +169,16 @@ public class NewsDetailsFragment extends Fragment implements View.OnClickListene
                 break;
 
             case R.id.btn_collect:
-                updataDB();
+                updateDB();
                 break;
             case R.id.btn_comment:
                 //点击评论，跳转到评论的Fragment
+                CommentFragment fragment = new CommentFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("nid",newsTitle.getNid());
+                fragment.setArguments(bundle);
+                ((MainActivity)getActivity()).replaceFragmentToStack(fragment);
+                mPopupWindow.dismiss();
                 break;
         }
     }
@@ -180,7 +186,7 @@ public class NewsDetailsFragment extends Fragment implements View.OnClickListene
     /**
      * 点击收藏更新数据库
      */
-    private void updataDB() {
+    private void updateDB() {
         if (!isCollect) {
             //收藏执行操作
             dbManager.inserNewsCollect(newsTitle);

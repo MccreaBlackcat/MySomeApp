@@ -196,14 +196,20 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                     Toast.makeText(getActivity(), getString(R.string.netWork_not), Toast.LENGTH_SHORT).show();
                 } else {
                     if (btn_login.getText().equals("登录")) {
-                        if (connectUtil.inspectUserName(account_number) && connectUtil.inspectPassWord(password)) {
+                        if (true) {
                             MyAsyncTask task = new MyAsyncTask();
-                            Log.i("shen", et_account_number.getText().toString());
-                            Log.i("shen", et_password.getText().toString());
                             task.execute(ConnectUtil.APPCONET, account_number, password);
                         } else {
                             Toast.makeText(getActivity(),getString(R.string.fragment_login_error),Toast.LENGTH_SHORT).show();
                         }
+//                        if (connectUtil.inspectUserName(account_number) && connectUtil.inspectPassWord(password)) {
+//                            MyAsyncTask task = new MyAsyncTask();
+//                            Log.i("shen", et_account_number.getText().toString());
+//                            Log.i("shen", et_password.getText().toString());
+//                            task.execute(ConnectUtil.APPCONET, account_number, password);
+//                        } else {
+//                            Toast.makeText(getActivity(),getString(R.string.fragment_login_error),Toast.LENGTH_SHORT).show();
+//                        }
                     }
                     if (btn_login.getText().equals("注册")) {
                         MyRegisterTask task = new MyRegisterTask();
@@ -300,7 +306,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
             super.onPostExecute(s);
             try {
                 // 解析字符串
-                Log.i("shen",s);
                 //实例化解析对象
                 JSONObject jsonObject = new JSONObject(s);
                 //获取解析对象jsonObject中对应KEY的内容
@@ -316,6 +321,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                     editor.putBoolean("login", true);
                     editor.putString("token", object.getString("token"));
                     editor.putString("user",account_number);
+                    editor.putString("password",password);
                     editor.commit();
                     ((MainActivity)getActivity()).addMainFragment(account_number);
                     result = explain;

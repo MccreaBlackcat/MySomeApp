@@ -19,6 +19,7 @@ import com.timestudio.mynews.BaseActivity;
 import com.timestudio.mynews.R;
 import com.timestudio.mynews.fragment.ContentFragment;
 import com.timestudio.mynews.fragment.LoginFragment;
+import com.timestudio.mynews.fragment.MyCenterFragment;
 import com.timestudio.mynews.myView.lib3.slidingmenu.SlidingMenu;
 import com.timestudio.mynews.util.ConnectUtil;
 
@@ -148,7 +149,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             case R.id.ll_menuBar_pics:
                 MainFragment.setTitleBarTest(getString(R.string.main_title_pic));
                 slidingMenu.showContent();
-                ll_menuBar_pics.setBackground(getResources().getDrawable(R.drawable.menubar_click));
+                ll_menuBar_pics.setBackgroundResource(R.drawable.menubar_click);
                 ll_menuBar_read.setBackground(null);
                 ll_menuBar_local.setBackground(null);
                 ll_menuBar_reply.setBackground(null);
@@ -163,6 +164,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 if (isLogin) {
                     //登录状态，点击则进入个人中心
                     Toast.makeText(this,getString(R.string.main_personal_center),Toast.LENGTH_SHORT).show();
+                    MyCenterFragment centerFragment = new MyCenterFragment();
+                    replaceFragmentToStack(centerFragment);
                     slidingMenu.showContent();
                 } else {
                     //未登录状态则替换为登录碎片
@@ -219,7 +222,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         mFm = getSupportFragmentManager();
         mFt = mFm.beginTransaction();
         mFt.add(R.id.fl_main,fragment)
-                .addToBackStack(null)
+//                .addToBackStack(null)
                 .commit();
     }
 
@@ -231,7 +234,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         mFm = getSupportFragmentManager();
         mFt = mFm.beginTransaction();
         mFt.replace(R.id.fl_main,fragment)
-//                .addToBackStack("SHEN")
+
+                .commit();
+    }
+    /**
+     * @description 替换碎片
+     */
+    public void replaceFragmentToStack(Fragment fragment) {
+        this.fragment = fragment;
+        mFm = getSupportFragmentManager();
+        mFt = mFm.beginTransaction();
+        mFt.replace(R.id.fl_main,fragment)
+                .addToBackStack(null)
                 .commit();
     }
 

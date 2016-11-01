@@ -80,7 +80,6 @@ public class NewsDBManager {
                 cursor.close();
             }
         }
-//        Log.i("shen", cursor.getCount() + "list");
         return list;
     }
 
@@ -215,6 +214,21 @@ public class NewsDBManager {
     }
 
     /**
+     * 查询是否收藏
+     */
+    public boolean queryIsCollectNews(int nid) {
+        SQLiteDatabase sqLite = db.getWritableDatabase();
+        String sql="select * from newsCollect where nid = " + nid;
+        Cursor cursor = sqLite.rawQuery(sql, null);
+        if (cursor != null && cursor.getCount() > 0){
+            cursor.close();
+            return true;
+        }
+        cursor.close();
+        return false;
+    }
+
+    /**
      * 修改新闻收藏表的信息
      */
 
@@ -224,6 +238,7 @@ public class NewsDBManager {
                 "nid=?",
                 new String[]{String.valueOf(nid)}
                 );
+        sql.close();
         if (i > 0) {
             return true;
         }
