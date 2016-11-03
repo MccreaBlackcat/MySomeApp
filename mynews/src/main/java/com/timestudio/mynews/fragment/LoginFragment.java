@@ -2,6 +2,7 @@ package com.timestudio.mynews.fragment;
 
 
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,10 +17,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.timestudio.mynews.R;
 import com.timestudio.mynews.activity.MainActivity;
 import com.timestudio.mynews.util.ConnectUtil;
+import com.timestudio.mynews.util.NewsManager;
+import com.timestudio.mynews.util.UserManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -323,7 +332,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                     editor.putString("user",account_number);
                     editor.putString("password",password);
                     editor.commit();
-                    ((MainActivity)getActivity()).addMainFragment(account_number);
+                    getUserPortrait(object.getString("token"));
+//                    ((MainActivity)getActivity()).addMainFragment(account_number);
                     result = explain;
                 } else {
                     et_password.setText("");
@@ -426,5 +436,51 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         }
     }
 
+    /**
+     * 获取用户头像
+     */
+    private void getUserPortrait(String token) {
+        final UserManager userManager = new UserManager(getActivity());
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        String url = ConnectUtil.APPCONET + "user_home?" + ConnectUtil.APP_VER + "&imei=111111111111111" +
+                "&token=" + token;
+        StringRequest request = new StringRequest(url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String s) {
+                String portrait = "";
+                try {
+                    JSONObject object = new JSONObject(s);
+                    if (object.getString("message").equals("OK")) {
+                        JSONObject ob = object.getJSONObject("data");
+                        portrait = ob.getString("portrait");
+                        Log.i("shen", portrait);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                userManager.getBitmap(null,portrait, getActivity(),new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap bitmap) {
+                        if (bitmap != null) {
+                            bitmap = ConnectUtil.makeBitmapCircle(bitmap);
+                            ((MainActivity)getActivity()).upDatePortrait(bitmap);
+                            ((MainActivity)getActivity()).addMainFragment(account_number);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.i("shen", "获取网络头像失败！-----------------");
+                    }
+                });
 
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+
+            }
+        });
+        queue.add(request);
+    }
 }

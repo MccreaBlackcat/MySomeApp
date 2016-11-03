@@ -28,6 +28,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.timestudio.mynews.R;
+import com.timestudio.mynews.activity.MainActivity;
 import com.timestudio.mynews.adapter.MyCenterAdapter;
 import com.timestudio.mynews.util.ConnectUtil;
 import com.timestudio.mynews.util.UserManager;
@@ -37,8 +38,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 
 /**
@@ -66,9 +69,11 @@ public class MyCenterFragment extends Fragment implements View.OnClickListener {
     private String comnum;
     private String time;
     private String address;
+    private String token;
+    UserManager userManager;
 
-    ArrayList<String[]> mList = new ArrayList<>();
-    boolean isShowLog = true;
+    private ArrayList<String[]> mList = new ArrayList<>();
+    private boolean isShowLog = true;
     private PopupWindow mPopupWindow;
     private TextView tv_photo;
     private TextView tv_take_photo;
@@ -83,6 +88,7 @@ public class MyCenterFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_my_center, container, false);
+        userManager = new UserManager(getActivity());
         initView();
         setListener();
         initData();
@@ -128,10 +134,9 @@ public class MyCenterFragment extends Fragment implements View.OnClickListener {
     private void initData() {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         SharedPreferences preferences = getActivity().getSharedPreferences("login", 0);
-        String token = preferences.getString("token", "");
+        token = preferences.getString("token", "");
         String url = ConnectUtil.APPCONET + "user_home?" + ConnectUtil.APP_VER + "&imei=111111111111111" +
                 "&token=" + token;
-        Log.i("shen", url);
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
@@ -151,15 +156,13 @@ public class MyCenterFragment extends Fragment implements View.OnClickListener {
                             mList.add(new String[]{time,address});
                         }
                     }
-                    UserManager userManager = new UserManager(getActivity());
-
-                    userManager.getBitmap(portrait, getActivity(), new Response.Listener<Bitmap>() {
+                    final Bitmap b = userManager.getBitmap(uid,portrait, getActivity(), new Response.Listener<Bitmap>() {
                         @Override
                         public void onResponse(Bitmap bitmap) {
+                            bitmap = ConnectUtil.makeBitmapCircle(bitmap);
                             iv_myCenter_portrait.setImageBitmap(bitmap);
-                            String icon = portrait;
-                            icon = icon.substring(icon.lastIndexOf("/") + 1);
-                            File file = new File(getActivity().getCacheDir(), "image");
+                            String icon = uid + ".jpg";
+                            File file = new File(getActivity().getCacheDir() + File.separator + "image");
                             if(!file.exists()){
                                 file.mkdirs();
                             }
@@ -170,6 +173,7 @@ public class MyCenterFragment extends Fragment implements View.OnClickListener {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            ((MainActivity)getActivity()).upDatePortrait(bitmap);
                         }
                     }, new Response.ErrorListener() {
                         @Override
@@ -177,6 +181,10 @@ public class MyCenterFragment extends Fragment implements View.OnClickListener {
 
                         }
                     });
+                    if (b != null) {
+                        iv_myCenter_portrait.setImageBitmap(ConnectUtil.makeBitmapCircle(b));
+                    }
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -219,6 +227,7 @@ public class MyCenterFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.tv_myCenter_exit:
+                ((MainActivity)getActivity()).exitLogin();
                 break;
             case R.id.tv_picppp_photo:
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -226,7 +235,8 @@ public class MyCenterFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.tv_picppp_take:
                 Intent mIntent1 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(mIntent1,100);
+
+                startActivityForResult(mIntent1,500);
                 break;
             case R.id.tv_picppp_cancel:
                 mPopupWindow.dismiss();
@@ -236,13 +246,57 @@ public class MyCenterFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 400 || requestCode ==500) {
-            if (data != null) {
+        Bitmap bitmap = null;
+        if (data != null) {
+            if (requestCode == 400 ) {
                 Crop(data.getData());
+            } else if (requestCode == 500) {
+                Bundle b = data.getExtras();
+                if(b == null)
+                    return;
+                bitmap = (Bitmap)b.get("data");
+//                bitmap = ConnectUtil.makeBitmapCircle(bitmap);
+                File file = new File(getActivity().getCacheDir() + File.separator + "image" + File.separator + uid + ".jpg");
+                OutputStream out = null;
+                try {
+                    out = new FileOutputStream(file);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                Uri uri = Uri.fromFile(file);
+                Log.i("shen", "MyCenterFragment ========== uri: " + uri.toString());
+                Crop(uri);
+            } else if (requestCode == 100) {
+                bitmap = (Bitmap) data.getExtras().get("data");
+//                bitmap = ConnectUtil.makeBitmapCircle(bitmap);
+                File file = new File(getActivity().getCacheDir() + File.separator + "image" + File.separator + uid + ".jpg");
+                OutputStream out = null;
+                try {
+                    out = new FileOutputStream(file);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                userManager.File(file, token, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        Log.i("shen", s);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.i("shen", "上传失败");
+                    }
+                });
+                bitmap = ConnectUtil.makeBitmapCircle(bitmap);
+                iv_myCenter_portrait.setImageBitmap(bitmap);
             }
-        } else if (requestCode == 100) {
-            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-            iv_myCenter_portrait.setImageBitmap(bitmap);
+            if (bitmap != null) {
+                ((MainActivity)getActivity()).upDatePortrait(bitmap);
+            }
+
         }
     }
 

@@ -41,6 +41,7 @@ public class ContentFragment extends Fragment implements View.OnClickListener{
     ImageView iv_menu;
     ImageView iv_login;
     TextView tv_titleBar;
+    ImageView iv_moreType;
     LinearLayout ll_loading;
 
     HorizontalListView hlv_title_type;
@@ -80,6 +81,7 @@ public class ContentFragment extends Fragment implements View.OnClickListener{
         iv_login = (ImageView) view.findViewById(R.id.iv_login);
         tv_titleBar = (TextView) view.findViewById(R.id.tv_titleBar);
         ll_loading = (LinearLayout) view.findViewById(R.id.ll_loading);
+        iv_moreType = (ImageView) view.findViewById(R.id.iv_moreType);
         iv_menu.setOnClickListener(this);
         iv_login.setOnClickListener(this);
 
@@ -213,6 +215,8 @@ public class ContentFragment extends Fragment implements View.OnClickListener{
 //                ((MainActivity)getActivity()).replaceFragment(fragment);
             }
         });
+
+        iv_moreType.setOnClickListener(this);
     }
 
 
@@ -299,6 +303,7 @@ public class ContentFragment extends Fragment implements View.OnClickListener{
         public void onResponse(String s) {
             mDataXList = ParserNews.parserNewsList(s);
             newsTitleAdapter.insertNewsList(mDataXList);
+            mDataXList = newsTitleAdapter.getMyList();
             newsTitleAdapter.update();
         }
     };
@@ -322,6 +327,8 @@ public class ContentFragment extends Fragment implements View.OnClickListener{
             //点击分享
             case R.id.iv_login:
                 ((MainActivity)getActivity()).setslidingMenuShowSecondaryMenu();
+                break;
+            case R.id.iv_moreType:
                 break;
         }
     }

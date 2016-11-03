@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MyNews</string>
+    <string name="app_name">朝日新闻</string>
     <string name="app_time">yyyy-MM-dd HH-mm-ss</string>
     <string name="netWork_not">当前网络不可用</string>
     <string name="netWork_mobile">正在使用2G/3G/4G网络</string>

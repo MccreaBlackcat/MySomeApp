@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -173,12 +174,17 @@ public class NewsDetailsFragment extends Fragment implements View.OnClickListene
                 break;
             case R.id.btn_comment:
                 //点击评论，跳转到评论的Fragment
-                CommentFragment fragment = new CommentFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt("nid",newsTitle.getNid());
-                fragment.setArguments(bundle);
-                ((MainActivity)getActivity()).replaceFragmentToStack(fragment);
-                mPopupWindow.dismiss();
+                if (ConnectUtil.isNetworkAvailable(getActivity())) {
+                    CommentFragment fragment = new CommentFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("nid",newsTitle.getNid());
+                    fragment.setArguments(bundle);
+                    ((MainActivity)getActivity()).replaceFragmentToStack(fragment);
+                    mPopupWindow.dismiss();
+                } else {
+                    Toast.makeText(getActivity(),getString(R.string.netWork_not),Toast.LENGTH_SHORT).show();
+                }
+
                 break;
         }
     }
@@ -187,18 +193,25 @@ public class NewsDetailsFragment extends Fragment implements View.OnClickListene
      * 点击收藏更新数据库
      */
     private void updateDB() {
-        if (!isCollect) {
-            //收藏执行操作
-            dbManager.inserNewsCollect(newsTitle);
-            isCollect = true;
-            btn_collect.setText("取消收藏");
+        if (ConnectUtil.isNetworkAvailable(getActivity())) {
+            if (!isCollect) {
+                //收藏执行操作
+                dbManager.inserNewsCollect(newsTitle);
+                isCollect = true;
+                btn_collect.setText("取消收藏");
+            } else {
+                //取消收藏操作
+                boolean b = dbManager.deleteNewsCollect(newsTitle.getNid());
+                //回调刷新收藏里的适配器
+                if (b) {
+                    isCollect = false;
+                    btn_collect.setText("收藏");
+                }
+            }
         } else {
-            //取消收藏操作
-            dbManager.deleteNewsCollect(newsTitle.getNid());
-            //回调刷新收藏里的适配器
-            isCollect = false;
-            btn_collect.setText("收藏");
+            Toast.makeText(getActivity(),getString(R.string.netWork_not),Toast.LENGTH_SHORT).show();
         }
+
 
     }
 
@@ -206,9 +219,14 @@ public class NewsDetailsFragment extends Fragment implements View.OnClickListene
      * 获取到评论数目
      */
     protected void initCommentQuantity() {
-        String url = ConnectUtil.APPCONET + "cmt_num?ver=1&nid=" + newsTitle.getNid();
-        NewsManager manager = new NewsManager(getActivity());
-        manager.getJSONObject(url, listener, errorListener);
+        if (ConnectUtil.isNetworkAvailable(getActivity())) {
+            String url = ConnectUtil.APPCONET + "cmt_num?ver=1&nid=" + newsTitle.getNid();
+            NewsManager manager = new NewsManager(getActivity());
+            manager.getJSONObject(url, listener, errorListener);
+        } else {
+            Toast.makeText(getActivity(),getString(R.string.netWork_not),Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     protected Response.Listener<String> listener = new Response.Listener<String>() {

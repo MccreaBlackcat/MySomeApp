@@ -51,14 +51,19 @@ public class CommentFragment extends Fragment implements View.OnClickListener,XL
     private XListView xlv_comment;
     private EditText et_comment;
     private Button btn_send_comment;
-
+    //评论列表适配器
     private CommentAdapter commentAdapter;
 
     private NewsManager manager;
+    //评论列表
     private ArrayList<CommentEntity> commentEntities = new ArrayList<>();
+    //用户名
     private int nid;
-    String token;
+    //用户token
+    private String token;
+    //用户评论内容
     private String ctx;
+    private String stamp;
 
 
 
@@ -84,6 +89,9 @@ public class CommentFragment extends Fragment implements View.OnClickListener,XL
         btn_send_comment = (Button) view.findViewById(R.id.btn_send_comment);
     }
 
+    /**
+     * 设置监听
+     */
     private void initListener() {
         iv_back_comment.setOnClickListener(this);
         xlv_comment.setPullLoadEnable(true);
@@ -109,30 +117,33 @@ public class CommentFragment extends Fragment implements View.OnClickListener,XL
         });
     }
 
+    /**
+     * 加载数据
+     */
     private void initData() {
         nid = getArguments().getInt("nid");
         RefreshComment();
-
-
     }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
 
             case R.id.btn_send_comment:
+                //获取到SharedPreferences中的登陆信息，如果没有登陆，则不能评论
                 SharedPreferences preferences = getActivity().getSharedPreferences("login", 0);
                 boolean isLogin = preferences.getBoolean("login", false);
                 if (isLogin) {
+                    //获取到SharedPreferences中的token
                     token = preferences.getString("token", "");
+                    //提交评论
                     publishComment();
-                    et_comment.setText("");
 
                 } else {
                     Toast.makeText(getActivity(),"请先登录！",Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.iv_back_comment:
-                ((MainActivity) getActivity()).getSupportFragmentManager().popBackStack();
+                getActivity().getSupportFragmentManager().popBackStack();
                 break;
         }
     }
@@ -181,7 +192,9 @@ public class CommentFragment extends Fragment implements View.OnClickListener,XL
     protected Response.Listener<String> refreshListener = new Response.Listener<String>() {
         @Override
         public void onResponse(String s) {
+            //清空ArrayL
             commentEntities.clear();
+            //解析获取新数据
             commentEntities = ParserNews.parserCommentList(s);
             commentAdapter.setMyList(commentEntities);
             xlv_comment.setAdapter(commentAdapter);
@@ -218,13 +231,20 @@ public class CommentFragment extends Fragment implements View.OnClickListener,XL
                 try {
                     JSONObject object = new JSONObject(s);
                     if (object.getString("message").equals("OK")) {
-                        String stamp = new SimpleDateFormat(getActivity().getResources().getString(R.string.app_time)).format(new Date());
-                        String uid = getActivity().getSharedPreferences("login",0).getString("uid","");
+                        stamp = new SimpleDateFormat(getActivity().getResources().getString(R.string.app_time)).format(new Date());
+                        Log.i("shen", "======================" + stamp);
+                        String uid = getActivity().getSharedPreferences("login",0).getString("user","");
+                        Log.i("shen", "======================" + uid);
+                        Log.i("shen", "======================" + ctx);
                         CommentEntity commentEntity = new CommentEntity(stamp,uid, ctx,"");
+                        Log.i("shen", "commentEntity======================" + commentEntity.getUid());
+                        Log.i("shen", "commentEntity======================" + commentEntity.getContent());
+                        Log.i("shen", "commentEntity======================" + commentEntity.getStamp());
                         commentEntities.add(0, commentEntity);
-                        commentAdapter.update();
-                        xlv_comment.setSelection(0);
                         Toast.makeText(getActivity(),"发表成功",Toast.LENGTH_SHORT).show();
+                        //提交完评论，将评论编辑框清空
+                        et_comment.setText("");
+                        commentAdapter.update();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -239,32 +259,6 @@ public class CommentFragment extends Fragment implements View.OnClickListener,XL
                 nid,
                 token,
                 ctx);
-
-//        String url = ConnectUtil.APPCONET + "cmt_commit?" + ConnectUtil.APP_VER + "&nid=" + nid + "&token="
-//                + token + "&imei=111111111111111" + "&ctx=" + ctx;
-//        manager.getJSONObject(url, new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String s) {
-//                        try {
-//                            JSONObject object = new JSONObject(s);
-//                            if (object.getString("message").equals("OK")) {
-//                                String stamp = new SimpleDateFormat(getActivity().getResources().getString(R.string.app_time)).format(new Date());
-//                                String uid = getActivity().getSharedPreferences("login",0).getString("user","");
-//                                CommentEntity commentEntity = new CommentEntity(stamp,uid, ctx,"");
-//                                commentEntities.add(0, commentEntity);
-//                                commentAdapter.update();
-//                                xlv_comment.setSelection(0);
-//                                Toast.makeText(getActivity(),"发表成功",Toast.LENGTH_SHORT).show();
-//                            }
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }, new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError volleyError) {
-//                        Toast.makeText(getActivity(),"发表失败",Toast.LENGTH_SHORT).show();
-//                    }
-//                });
+        xlv_comment.setSelection(0);
     }
 }

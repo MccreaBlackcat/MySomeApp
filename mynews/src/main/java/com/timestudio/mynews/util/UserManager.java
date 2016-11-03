@@ -12,6 +12,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.timestudio.mynews.util.lib3.MultiPosttRequest;
+import com.timestudio.mynews.util.lib3.MultipartEntity;
 
 import java.io.File;
 
@@ -57,8 +59,8 @@ public class UserManager {
     /**
      * 获取本地头像
      */
-    private Bitmap getBitmap(String url,Context context){
-        String icon = url.substring(url.lastIndexOf("/") + 1);
+    private Bitmap getBitmap(String uid,Context context){
+        String icon = uid + ".jpg";
         File file = new File(context.getCacheDir() + File.separator + "image");
         File f[] = file.listFiles();
         if (f != null) {
@@ -73,13 +75,31 @@ public class UserManager {
     /**
      * 获取图片
      */
-    public Bitmap getBitmap(String url, Context context, Response.Listener<Bitmap> listener, Response.ErrorListener errorListener){
-        Bitmap b = getBitmap(url, context);
-        if(b != null){
-            Log.i("GUO","本地");
-            return b;
+    public Bitmap getBitmap(String uid,String portrait, Context context, Response.Listener<Bitmap> listener, Response.ErrorListener errorListener){
+        if (uid != null) {
+            Bitmap b = getBitmap(uid, context);
+            if(b != null){
+                Log.i("shen","UserManager---------------获取本地头像");
+                return b;
+            }
         }
-        getBitmap(url, listener, errorListener);
+        getBitmap(portrait, listener, errorListener);
+        Log.i("shen","UserManager---------------获取网络头像");
         return null;
     }
+
+    /**
+     * 上传头像
+     */
+    public void File(File file, String token,Response.Listener<String> listener, Response.ErrorListener errorListener) {
+
+        String url = ConnectUtil.APPCONET + "user_image?token="+ token +"&portrait=" + file;
+        Log.i("shen", "UserManager--------------------" + url);
+        MultiPosttRequest multiPosttRequest = new MultiPosttRequest(url,listener,errorListener);
+        multiPosttRequest.buildMultipartEntity("portrait",file);
+        mQueue.add(multiPosttRequest);
+    }
+
+
+
 }

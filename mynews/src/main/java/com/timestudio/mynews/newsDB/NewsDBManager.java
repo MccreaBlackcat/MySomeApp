@@ -193,7 +193,7 @@ public class NewsDBManager {
     public ArrayList<NewsTitle> queryCollectNews(int count, int offset) {
         ArrayList<NewsTitle> newsList = new ArrayList<NewsTitle>();
         SQLiteDatabase sqLite=db.getWritableDatabase();
-        String sql="select * from newsCollect order by _id desc limit "+count+" offset "+offset;
+        String sql="select * from newsCollect order by _id desc limit "+count+","+offset;
         Cursor cursor=sqLite.rawQuery(sql, null);
         if (cursor.moveToFirst()) {
             do {
@@ -229,12 +229,12 @@ public class NewsDBManager {
     }
 
     /**
-     * 修改新闻收藏表的信息
+     * 删除新闻收藏表的信息
      */
 
     public boolean deleteNewsCollect(int nid) {
         SQLiteDatabase sql = db.getWritableDatabase();
-        int i = sql.delete(NewsTitleEntry.TABLE_NAME_LIST,
+        int i = sql.delete(NewsTitleEntry.TABLE_NAME_Collect,
                 "nid=?",
                 new String[]{String.valueOf(nid)}
                 );

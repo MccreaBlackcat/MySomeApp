@@ -4,6 +4,8 @@ package com.timestudio.mynews.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -20,8 +22,12 @@ import com.timestudio.mynews.R;
 import com.timestudio.mynews.fragment.ContentFragment;
 import com.timestudio.mynews.fragment.LoginFragment;
 import com.timestudio.mynews.fragment.MyCenterFragment;
+import com.timestudio.mynews.fragment.NewsCollectFragment;
 import com.timestudio.mynews.myView.lib3.slidingmenu.SlidingMenu;
 import com.timestudio.mynews.util.ConnectUtil;
+import com.timestudio.mynews.util.UserManager;
+
+import java.io.File;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener{
 
@@ -125,7 +131,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 ll_menuBar_local.setBackground(null);
                 ll_menuBar_reply.setBackground(null);
                 ll_menuBar_pics.setBackground(null);
-
+                NewsCollectFragment collectFragment = new NewsCollectFragment();
+                replaceFragment(collectFragment);
                 slidingMenu.showContent();
                 break;
             case R.id.ll_menuBar_local:
@@ -159,26 +166,30 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             case R.id.iv_login_pic:
                 //点击头像图片和文字都可以登录，所以就不单独写了，两个控件的控件的功能就用同一个
             case R.id.tv_login_test:
-                //创建一个SharedPreference 用来获取到登陆状态，true为登录，false为未登录
-                boolean isLogin = preferences.getBoolean("login",false);
-                if (isLogin) {
-                    //登录状态，点击则进入个人中心
-                    Toast.makeText(this,getString(R.string.main_personal_center),Toast.LENGTH_SHORT).show();
-                    MyCenterFragment centerFragment = new MyCenterFragment();
-                    replaceFragmentToStack(centerFragment);
-                    slidingMenu.showContent();
-                } else {
-                    //未登录状态则替换为登录碎片
-                    //在登录界面，设置title为“登录”
-                    if (!ConnectUtil.isNetworkAvailable(this)) {
-                        Toast.makeText(this,getString(R.string.netWork_not),Toast.LENGTH_SHORT).show();
+                //判断是否有网络
+                if (ConnectUtil.isNetworkAvailable(this)) {
+                    //创建一个SharedPreference 用来获取到登陆状态，true为登录，false为未登录
+                    boolean isLogin = preferences.getBoolean("login", false);
+                    if (isLogin) {
+                        //登录状态，点击则进入个人中心
+                        Toast.makeText(this, getString(R.string.main_personal_center), Toast.LENGTH_SHORT).show();
+                        MyCenterFragment centerFragment = new MyCenterFragment();
+                        replaceFragmentToStack(centerFragment);
+                        slidingMenu.showContent();
+                    } else {
+                        //未登录状态则替换为登录碎片
+                        //在登录界面，设置title为“登录”
+                        if (!ConnectUtil.isNetworkAvailable(this)) {
+                            Toast.makeText(this, getString(R.string.netWork_not), Toast.LENGTH_SHORT).show();
+                        }
+                        MainFragment.setTitleBarTest(getString(R.string.fragment_login_login));
+                        //替换掉原来的fragment
+                        replaceFragment(new LoginFragment());
+                        slidingMenu.showContent();
                     }
-                    MainFragment.setTitleBarTest(getString(R.string.fragment_login_login));
-                    //替换掉原来的fragment
-                    replaceFragment(new LoginFragment());
-                    slidingMenu.showContent();
+                } else {
+                    Toast.makeText(this,getString(R.string.netWork_not),Toast.LENGTH_SHORT).show();
                 }
-
                 break;
         }
     }
@@ -194,6 +205,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
         //加载右边目录的控件
         iv_login_pic = (ImageView) slidingMenu.findViewById(R.id.iv_login_pic);
+        setPortrait();
         tv_login_test = (TextView) slidingMenu.findViewById(R.id.tv_login_test);
         ll_share = (LinearLayout) slidingMenu.findViewById(R.id.ll_share);
 
@@ -297,5 +309,47 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             //展示
             slidingMenu.showSecondaryMenu();
         }
+    }
+
+    public void upDatePortrait(Bitmap bitmap) {
+        bitmap = ConnectUtil.makeBitmapCircle(bitmap);
+        iv_login_pic.setImageBitmap(bitmap);
+    }
+
+    /**
+     * 设置头像
+     */
+    public void setPortrait() {
+        Bitmap bitmap = null;
+        SharedPreferences preferences = getSharedPreferences("login", 0);
+        String uid = preferences.getString("user", "");
+        if (!uid.equals("")) {
+            String icon = uid + ".jpg";
+            File file = new File(getCacheDir() + File.separator + "image");
+            File f[] = file.listFiles();
+            if (f != null) {
+                for (File ff :f){
+                    if(ff.getName().equals(icon)){
+                        bitmap = BitmapFactory.decodeFile(ff.getAbsolutePath());
+                        bitmap = ConnectUtil.makeBitmapCircle(bitmap);
+                        iv_login_pic.setImageBitmap(bitmap);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 退出登陆
+     */
+    public void exitLogin() {
+        SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.clear();
+        editor.commit();
+        replaceFragment(MainFragment);
+        tv_login_test.setText(getString(R.string.loginmenu_loginNow));
+        ll_share.setVisibility(View.VISIBLE);
+
     }
 }
